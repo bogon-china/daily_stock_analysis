@@ -1,34 +1,37 @@
-# 文件位置：.github/workflows/stock-analysis.yml
-name: Daily Stock Analysis
+name: Daily Stock Analysis Automation
 
 on:
   schedule:
-    - cron: '0 20 * * 1-5'  # 工作日20:00运行（北京时间）
+    - cron: '0 12 * * 1-5'  # 工作日北京时间20:00运行
   push:
     branches: [main]
-  workflow_dispatch:  # 允许手动触发
+  workflow_dispatch:
 
 jobs:
   analyze:
     runs-on: ubuntu-latest
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      TUSHARE_TOKEN: ${{ secrets.TUSHARE_TOKEN }}
+      STOCK_LIST: ${{ secrets.STOCK_LIST }}
     
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-    
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.10'
-    
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
-    
-    - name: Run analysis
-      run: |
-        python main.py
-      env:
-        API_KEY: $
-        TUSHARE_TOKEN: $
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+      
+      - name: Run stock analysis
+        run: |
+          python src/main.py
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          TUSHARE_TOKEN: ${{ secrets.TUSHARE_TOKEN }}
+          STOCK_LIST: ${{ secrets.STOCK_LIST }}
